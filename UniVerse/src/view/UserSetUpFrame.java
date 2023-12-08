@@ -159,49 +159,66 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 	}
 
-	private List<StudentData> studentDataList = new ArrayList<>();
+	private List<StudentData> courseDataList = new ArrayList<>();
+	private List<StudentData> personalInfoList = new ArrayList<>();
+
 
 	private void collectAndDisplayCourseData() {
-		// Collect and display course data
-		StudentData studentData = new StudentData();
-		JTextField courseCodeField = null;
-		for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(1))) {
-			if (component instanceof JTextField) {
-				JTextField textField = (JTextField) component;
-				String text = textField.getText().trim();
+	    StudentData studentData = new StudentData();
+	    JTextField courseCodeField = null;
 
-				if (!text.isEmpty()) { // Check if the field is not empty
-					if (courseCodeField == null) {
-						// This is a course code field
-						studentData.setCourseCode(text);
-						courseCodeField = textField;
-					} else {
-						// pair it with the corresponding course code
-						studentData.setGrade(text);
+	    for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(1))) {
+	        if (component instanceof JTextField) {
+	            JTextField textField = (JTextField) component;
+	            String text = textField.getText().trim();
 
-						// Add the studentData object to the list
-						studentDataList.add(studentData);
+	            if (!text.isEmpty()) {
+	                if (courseCodeField == null) {
+	                    studentData.setCourseCode(text);
+	                    courseCodeField = textField;
+	                } else {
+	                    studentData.setGrade(text);
+	                    courseDataList.add(studentData);
+	                    System.out.println("Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
 
-						System.out.println(
-								"Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
-
-						// reset the courseCodeField for the next pair
-						courseCodeField = null;
-						studentData = new StudentData(); // Create a new StudentData object for the next pair
-					}
-				}
-			}
-		}
-
+	                    courseCodeField = null;
+	                    studentData = new StudentData();
+	                }
+	            }
+	        }
+	    }
 		// debug
 		System.out.println("Student Data List:");
-		for (StudentData data : studentDataList) {
+		for (StudentData data : courseDataList) {
 			System.out.println("Course Code: " + data.getCourseCode() + ", Grade: " + data.getGrade());
 		}
 
 		dispose();
-		// Open your next frame or perform any other necessary actions
 		new HomeFrame();
+	}
+	
+	private void collectAndDisplayPersonalData() {
+	    StudentData studentData = new StudentData();
+
+	    studentData.setUnit(unitField.getText().trim());
+	    studentData.setAddress(addressField.getText().trim());
+	    studentData.setCity(cityField.getText().trim());
+	    studentData.setPostalCode(postalCodeField.getText().trim());
+	    studentData.setProvince(provinceField.getText().trim());
+	    studentData.setCountry(countryField.getText().trim());
+
+	    personalInfoList.add(studentData);
+
+	    // Debugging
+	    System.out.println("Personal Information List:");
+	    for (StudentData data : personalInfoList) {
+	        System.out.println("Unit: " + data.getUnit() +
+	                ", Address: " + data.getAddress() +
+	                ", City: " + data.getCity() +
+	                ", Postal Code: " + data.getPostalCode() +
+	                ", Province: " + data.getProvince() +
+	                ", Country: " + data.getCountry());
+	    }
 	}
 
 	@Override
@@ -216,28 +233,9 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		}
 
 		else if (e.getSource() == getStartedBtn) {
-			// get the data from text fields
-			String dataFirstName = firstNameField.getText().trim();
-			String dataLastName = lastNameField.getText().trim();
-			String dataUnit = unitField.getText().trim();
-			String dataAddress = addressField.getText().trim();
-			String dataCity = cityField.getText().trim();
-			String dataPostalCode = postalCodeField.getText().trim();
-			String dataProvince = provinceField.getText().trim();
-			String dataCountry = countryField.getText().trim();
-
-			// debugging
-			System.out.println("User Data:");
-			System.out.println("First Name: " + dataFirstName);
-			System.out.println("Last Name: " + dataLastName);
-			System.out.println("Unit: " + dataUnit);
-			System.out.println("Address: " + dataAddress);
-			System.out.println("City: " + dataCity);
-			System.out.println("Postal Code: " + dataPostalCode);
-			System.out.println("Province: " + dataProvince);
-			System.out.println("Country: " + dataCountry);
 
 			collectAndDisplayCourseData();
+			collectAndDisplayPersonalData();
 
 			// open home frame and close current frame
 			new HomeFrame();
