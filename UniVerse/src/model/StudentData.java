@@ -16,6 +16,9 @@ public class StudentData {
 	private String username;
 	private String password;
 	
+	private String courseCode;
+	private String grade;
+	
 
 
 	public String getFirstName() {
@@ -97,6 +100,22 @@ public class StudentData {
 
 	public void setPassword(String password) {
 		this.password = password;
+	}
+
+	public String getCourseCode() {
+		return courseCode;
+	}
+
+	public void setCourseCode(String courseCode) {
+		this.courseCode = courseCode;
+	}
+
+	public String getGrade() {
+		return grade;
+	}
+
+	public void setGrade(String grade) {
+		this.grade = grade;
 	}
 	
 	

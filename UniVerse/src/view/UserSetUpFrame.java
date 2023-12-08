@@ -2,11 +2,13 @@ package view;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -18,6 +20,8 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+
+import model.StudentData;
 
 public class UserSetUpFrame extends JFrame implements ActionListener {
 
@@ -33,12 +37,14 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 	// fields for user academic information
 
-    private JTextField numCoursesField;
-    private JButton confirmBtn;
-    private JButton submitCoursesBtn;
-    private JButton getStartedBtn;
-    private JLayeredPane layeredPane;
-    private JTextField lastGradeField; //used to track last grade field to add button dynamically
+	private JTextField numCoursesField;
+	private JButton confirmBtn;
+	private JButton submitCoursesBtn;
+	private JButton getStartedBtn;
+	private JLayeredPane layeredPane;
+	private JTextField courseCodeField;
+	private JTextField gradeField;
+	private JTextField lastGradeField; // used to track last grade field to add button dynamically
 
 	public UserSetUpFrame() {
 		super("User Set Up");
@@ -46,7 +52,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		setSize(1440, 900);
 
 		// set the background image
-		ImageIcon backgroundImg = new ImageIcon("images/userProfileSetupBg.png");
+		ImageIcon backgroundImg = new ImageIcon("images/userProfileSetupBg2.png");
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(backgroundImg.getIconWidth(), backgroundImg.getIconHeight()));
 
@@ -55,8 +61,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		Dimension imageSize = new Dimension(backgroundImg.getIconWidth(), backgroundImg.getIconHeight());
 		imageLabel.setPreferredSize(imageSize);
 
-		
-		//--- Personal Info
+		// --- Personal Info
 		// add first name text field
 		firstNameField = new JTextField(); // instantiate the JTextField
 		firstNameField.setBounds(100, 300, 500, 80);
@@ -112,26 +117,22 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		countryField.addActionListener(this);
 		countryField.setBackground(Color.LIGHT_GRAY);
 		countryField.setFont(new Font("Arial", Font.PLAIN, 23));
-		
-		
-		//--- Academic Info
+
+		// --- Academic Info
 		numCoursesField = new JTextField();
-		numCoursesField.setBounds(100, 930, 200, 80);;
+		numCoursesField.setBounds(100, 930, 200, 80);
 		numCoursesField.addActionListener(this);
 		numCoursesField.setBackground(Color.LIGHT_GRAY);
 		numCoursesField.setFont(new Font("Arial", Font.PLAIN, 23));
 
-		
-        ImageIcon confirmIcon = new ImageIcon("images/confirmBtn.png");
-        confirmBtn = new JButton(confirmIcon);
-        confirmBtn.setOpaque(false);
-        confirmBtn.setContentAreaFilled(false);
-        confirmBtn.setBorderPainted(false);
-        confirmBtn.setBounds(320, 940, confirmIcon.getIconWidth(), confirmIcon.getIconHeight());
-        confirmBtn.addActionListener(this);
-		
-		
-		
+		ImageIcon confirmIcon = new ImageIcon("images/confirmBtn.png");
+		confirmBtn = new JButton(confirmIcon);
+		confirmBtn.setOpaque(false);
+		confirmBtn.setContentAreaFilled(false);
+		confirmBtn.setBorderPainted(false);
+		confirmBtn.setBounds(320, 940, confirmIcon.getIconWidth(), confirmIcon.getIconHeight());
+		confirmBtn.addActionListener(this);
+
 		// add components to the layered pane
 		layeredPane.add(imageLabel, Integer.valueOf(0));
 		layeredPane.add(firstNameField, Integer.valueOf(1));
@@ -144,7 +145,6 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		layeredPane.add(countryField, Integer.valueOf(1));
 		layeredPane.add(numCoursesField, Integer.valueOf(1));
 		layeredPane.add(confirmBtn, Integer.valueOf(1));
-		
 
 		// add layered pane to scroll pane
 		JScrollPane jsp = new JScrollPane(layeredPane);
@@ -156,92 +156,142 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 		// set frame visible
 		setVisible(true);
-		
-
 
 	}
 
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == confirmBtn) {
-            try {
-                int numCourses = Integer.parseInt(numCoursesField.getText().trim());
-                createCourseFields(numCourses);
-            } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid number.");
-            }
-        }
-        
-        else if(e.getSource() == getStartedBtn) {
-        	//get the data from text fields
-        	String dataFirstName = firstNameField.getText().trim();
-           	String dataLastName = lastNameField.getText().trim();
-           	String dataUnit = unitField.getText().trim();
-           	String dataAddress = addressField.getText().trim();
-           	String dataCity = cityField.getText().trim();
-           	String dataPostalCode = postalCodeField.getText().trim();
-           	String dataProvince = provinceField.getText().trim();
-           	String dataCountry = countryField.getText().trim();
-        	
+	private List<StudentData> studentDataList = new ArrayList<>();
 
+	private void collectAndDisplayCourseData() {
+		// Collect and display course data
+		StudentData studentData = new StudentData();
+		JTextField courseCodeField = null;
+		for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(1))) {
+			if (component instanceof JTextField) {
+				JTextField textField = (JTextField) component;
+				String text = textField.getText().trim();
 
-        	
-        	
-        	//open home frame and close current frame
-        	new HomeFrame();
-        	dispose();
-        }
-    }
+				if (!text.isEmpty()) { // Check if the field is not empty
+					if (courseCodeField == null) {
+						// This is a course code field
+						studentData.setCourseCode(text);
+						courseCodeField = textField;
+					} else {
+						// pair it with the corresponding course code
+						studentData.setGrade(text);
 
+						// Add the studentData object to the list
+						studentDataList.add(studentData);
 
-	   private void createCourseFields(int numCourses) {
+						System.out.println(
+								"Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
 
-	        // add text fields for course code and grade dynamically
-	        for (int i = 0; i < numCourses; i++) {
-	            JTextField courseCodeField = new JTextField();
-	            JTextField gradeField = new JTextField();
+						// reset the courseCodeField for the next pair
+						courseCodeField = null;
+						studentData = new StudentData(); // Create a new StudentData object for the next pair
+					}
+				}
+			}
+		}
 
-	            int xCoordinate = 100;
-	            int yCoordinate = 1100 + i * 100; //create even spacing
+		// debug
+		System.out.println("Student Data List:");
+		for (StudentData data : studentDataList) {
+			System.out.println("Course Code: " + data.getCourseCode() + ", Grade: " + data.getGrade());
+		}
 
-	            JLabel courseCodeLabel = new JLabel("Course Code:");
-	            courseCodeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-	            courseCodeLabel.setBounds(xCoordinate, yCoordinate, 250, 50);
-	            layeredPane.add(courseCodeLabel, Integer.valueOf(1));
+		dispose();
+		// Open your next frame or perform any other necessary actions
+		new HomeFrame();
+	}
 
-	            courseCodeField.setBounds(xCoordinate + 150, yCoordinate, 200, 50);
-	            layeredPane.add(courseCodeField, Integer.valueOf(1));
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource() == confirmBtn) {
+			try {
+				int numCourses = Integer.parseInt(numCoursesField.getText().trim());
+				createCourseFields(numCourses);
+			} catch (NumberFormatException ex) {
+				JOptionPane.showMessageDialog(this, "Please enter a valid number.");
+			}
+		}
 
-	            JLabel gradeLabel = new JLabel("Grade:");
-	            gradeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
-	            gradeLabel.setBounds(xCoordinate + 350, yCoordinate, 250, 50);
-	            layeredPane.add(gradeLabel, Integer.valueOf(1));
+		else if (e.getSource() == getStartedBtn) {
+			// get the data from text fields
+			String dataFirstName = firstNameField.getText().trim();
+			String dataLastName = lastNameField.getText().trim();
+			String dataUnit = unitField.getText().trim();
+			String dataAddress = addressField.getText().trim();
+			String dataCity = cityField.getText().trim();
+			String dataPostalCode = postalCodeField.getText().trim();
+			String dataProvince = provinceField.getText().trim();
+			String dataCountry = countryField.getText().trim();
 
-	            gradeField.setBounds(xCoordinate + 500, yCoordinate, 200, 50);
-	            layeredPane.add(gradeField, Integer.valueOf(1));
-	            
-	            lastGradeField = gradeField;
-	        }
-	        // place continue button below the last text field
-	        if (lastGradeField != null) {
-	            int buttonYCoordinate = lastGradeField.getY() + lastGradeField.getHeight() + 15; //15 is the spacing 
-	            ImageIcon getStartedIcon = new ImageIcon("images/getStartedBtn.png");
-	            getStartedBtn = new JButton(getStartedIcon);
-	            getStartedBtn.setOpaque(false);
-	            getStartedBtn.setContentAreaFilled(false);
-	            getStartedBtn.setBorderPainted(false);
-	            getStartedBtn.setBounds(320, buttonYCoordinate, getStartedIcon.getIconWidth(), getStartedIcon.getIconHeight());
-	            getStartedBtn.addActionListener(this);
-	            layeredPane.add(getStartedBtn, Integer.valueOf(1));
-	        }
+			// debugging
+			System.out.println("User Data:");
+			System.out.println("First Name: " + dataFirstName);
+			System.out.println("Last Name: " + dataLastName);
+			System.out.println("Unit: " + dataUnit);
+			System.out.println("Address: " + dataAddress);
+			System.out.println("City: " + dataCity);
+			System.out.println("Postal Code: " + dataPostalCode);
+			System.out.println("Province: " + dataProvince);
+			System.out.println("Country: " + dataCountry);
 
-	        // repaint the frame
-	        revalidate();
-	        repaint();
-	    }
+			collectAndDisplayCourseData();
 
+			// open home frame and close current frame
+			new HomeFrame();
+			dispose();
+		}
+	}
 
-	    
+	private void createCourseFields(int numCourses) {
+
+		// add text fields for course code and grade dynamically
+		for (int i = 0; i < numCourses; i++) {
+			courseCodeField = new JTextField();
+			gradeField = new JTextField();
+
+			int xCoordinate = 100;
+			int yCoordinate = 1100 + i * 100; // create even spacing
+
+			JLabel courseCodeLabel = new JLabel("Course Code:");
+			courseCodeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+			courseCodeLabel.setBounds(xCoordinate, yCoordinate, 250, 50);
+			layeredPane.add(courseCodeLabel, Integer.valueOf(1));
+
+			courseCodeField.setBounds(xCoordinate + 150, yCoordinate, 200, 50);
+			layeredPane.add(courseCodeField, Integer.valueOf(1));
+
+			JLabel gradeLabel = new JLabel("Grade:");
+			gradeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
+			gradeLabel.setBounds(xCoordinate + 350, yCoordinate, 250, 50);
+			layeredPane.add(gradeLabel, Integer.valueOf(1));
+
+			gradeField.setBounds(xCoordinate + 500, yCoordinate, 200, 50);
+			layeredPane.add(gradeField, Integer.valueOf(1));
+
+			lastGradeField = gradeField;
+		}
+		// place continue button below the last text field
+		if (lastGradeField != null) {
+			int buttonYCoordinate = lastGradeField.getY() + lastGradeField.getHeight() + 15; // 15 is the spacing
+			ImageIcon getStartedIcon = new ImageIcon("images/getStartedBtn.png");
+			getStartedBtn = new JButton(getStartedIcon);
+			getStartedBtn.setOpaque(false);
+			getStartedBtn.setContentAreaFilled(false);
+			getStartedBtn.setBorderPainted(false);
+			getStartedBtn.setBounds(320, buttonYCoordinate, getStartedIcon.getIconWidth(),
+					getStartedIcon.getIconHeight());
+			getStartedBtn.addActionListener(this);
+			layeredPane.add(getStartedBtn, Integer.valueOf(1));
+		}
+
+		// repaint the frame
+		revalidate();
+		repaint();
+	}
+
 	public static void main(String[] args) {
 		new UserSetUpFrame();
 	}
