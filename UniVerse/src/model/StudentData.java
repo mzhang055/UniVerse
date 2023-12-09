@@ -1,7 +1,5 @@
 package model;
 
-import view.UserSetUpFrame;
-
 public class StudentData {
 	
 	//create fields for student's data

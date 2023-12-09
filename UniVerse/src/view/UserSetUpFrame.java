@@ -36,16 +36,16 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField countryField;
 
 	// fields for user academic information
-
 	private JTextField numCoursesField;
 	private JButton confirmBtn;
-	private JButton submitCoursesBtn;
 	private JButton getStartedBtn;
 	private JLayeredPane layeredPane;
 	private JTextField courseCodeField;
 	private JTextField gradeField;
 	private JTextField lastGradeField; // used to track last grade field to add button dynamically
 
+	
+	//constructor
 	public UserSetUpFrame() {
 		super("User Set Up");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -61,68 +61,71 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		Dimension imageSize = new Dimension(backgroundImg.getIconWidth(), backgroundImg.getIconHeight());
 		imageLabel.setPreferredSize(imageSize);
 
+		//set the background colour for all text fields.
+		Color color = new Color(245,245,245);
+		
 		// --- Personal Info
 		// add first name text field
 		firstNameField = new JTextField(); // instantiate the JTextField
 		firstNameField.setBounds(100, 300, 500, 80);
 		firstNameField.addActionListener(this);
-		firstNameField.setBackground(Color.LIGHT_GRAY);
+		firstNameField.setBackground(color);
 		firstNameField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add last name text field
 		lastNameField = new JTextField(); // instantiate the JTextField
 		lastNameField.setBounds(745, 300, 500, 80);
 		lastNameField.addActionListener(this);
-		lastNameField.setBackground(Color.LIGHT_GRAY);
+		lastNameField.setBackground(color);
 		lastNameField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add unit text field
 		unitField = new JTextField(); // instantiate the JTextField
 		unitField.setBounds(100, 450, 500, 80);
 		unitField.addActionListener(this);
-		unitField.setBackground(Color.LIGHT_GRAY);
+		unitField.setBackground(color);
 		unitField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add address field
 		addressField = new JTextField(); // instantiate the JTextField
 		addressField.setBounds(745, 450, 500, 80);
 		addressField.addActionListener(this);
-		addressField.setBackground(Color.LIGHT_GRAY);
+		addressField.setBackground(color);
 		addressField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add city field
 		cityField = new JTextField(); // instantiate the JTextField
 		cityField.setBounds(100, 570, 500, 80);
 		cityField.addActionListener(this);
-		cityField.setBackground(Color.LIGHT_GRAY);
+		cityField.setBackground(color);
 		cityField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add postal code field
 		postalCodeField = new JTextField(); // instantiate the JTextField
 		postalCodeField.setBounds(745, 570, 500, 80);
 		postalCodeField.addActionListener(this);
-		postalCodeField.setBackground(Color.LIGHT_GRAY);
+		postalCodeField.setBackground(color);
 		postalCodeField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add province field
 		provinceField = new JTextField(); // instantiate the JTextField
 		provinceField.setBounds(100, 700, 500, 80);
 		provinceField.addActionListener(this);
-		provinceField.setBackground(Color.LIGHT_GRAY);
+		provinceField.setBackground(color);
 		provinceField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// add country field
 		countryField = new JTextField(); // instantiate the JTextField
 		countryField.setBounds(745, 700, 500, 80);
 		countryField.addActionListener(this);
-		countryField.setBackground(Color.LIGHT_GRAY);
+		countryField.setBackground(color);
 		countryField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		// --- Academic Info
 		numCoursesField = new JTextField();
 		numCoursesField.setBounds(100, 930, 200, 80);
 		numCoursesField.addActionListener(this);
-		numCoursesField.setBackground(Color.LIGHT_GRAY);
+		numCoursesField.setBackground(color);
 		numCoursesField.setFont(new Font("Arial", Font.PLAIN, 23));
 
 		ImageIcon confirmIcon = new ImageIcon("images/confirmBtn.png");
@@ -162,63 +165,62 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private List<StudentData> courseDataList = new ArrayList<>();
 	private List<StudentData> personalInfoList = new ArrayList<>();
 
-
 	private void collectAndDisplayCourseData() {
-	    StudentData studentData = new StudentData();
-	    JTextField courseCodeField = null;
+		StudentData studentData = new StudentData();
+		JTextField courseCodeField = null;
 
-	    for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(1))) {
-	        if (component instanceof JTextField) {
-	            JTextField textField = (JTextField) component;
-	            String text = textField.getText().trim();
+		for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(2))) {
+			if (component instanceof JTextField) {
+				JTextField textField = (JTextField) component;
+				String text = textField.getText().trim();
 
-	            if (!text.isEmpty()) {
-	                if (courseCodeField == null) {
-	                    studentData.setCourseCode(text);
-	                    courseCodeField = textField;
-	                } else {
-	                    studentData.setGrade(text);
-	                    courseDataList.add(studentData);
-	                    System.out.println("Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
+				if (!text.isEmpty()) {
+					if (courseCodeField == null) {
+						studentData.setCourseCode(text);
+						courseCodeField = textField;
+					} else {
+						studentData.setGrade(text);
+						courseDataList.add(studentData);
+//						System.out.println(
+//								"Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
 
-	                    courseCodeField = null;
-	                    studentData = new StudentData();
-	                }
-	            }
-	        }
-	    }
+						courseCodeField = null;
+						studentData = new StudentData();
+					}
+				}
+			}
+		}
 		// debug
-		System.out.println("Student Data List:");
+		System.out.println("Course Data List:");
 		for (StudentData data : courseDataList) {
 			System.out.println("Course Code: " + data.getCourseCode() + ", Grade: " + data.getGrade());
 		}
+		System.out.println();
 
+		//collectAndDisplayPersonalData();
 		dispose();
 		new HomeFrame();
 	}
-	
+
 	private void collectAndDisplayPersonalData() {
-	    StudentData studentData = new StudentData();
+		StudentData studentData = new StudentData();
 
-	    studentData.setUnit(unitField.getText().trim());
-	    studentData.setAddress(addressField.getText().trim());
-	    studentData.setCity(cityField.getText().trim());
-	    studentData.setPostalCode(postalCodeField.getText().trim());
-	    studentData.setProvince(provinceField.getText().trim());
-	    studentData.setCountry(countryField.getText().trim());
+		studentData.setUnit(unitField.getText().trim());
+		studentData.setAddress(addressField.getText().trim());
+		studentData.setCity(cityField.getText().trim());
+		studentData.setPostalCode(postalCodeField.getText().trim());
+		studentData.setProvince(provinceField.getText().trim());
+		studentData.setCountry(countryField.getText().trim());
 
-	    personalInfoList.add(studentData);
+		personalInfoList.add(studentData);
 
-	    // Debugging
-	    System.out.println("Personal Information List:");
-	    for (StudentData data : personalInfoList) {
-	        System.out.println("Unit: " + data.getUnit() +
-	                ", Address: " + data.getAddress() +
-	                ", City: " + data.getCity() +
-	                ", Postal Code: " + data.getPostalCode() +
-	                ", Province: " + data.getProvince() +
-	                ", Country: " + data.getCountry());
-	    }
+		// Debugging
+		System.out.println("Personal Information List:");
+		for (StudentData data : personalInfoList) {
+			System.out.println("Unit: " + data.getUnit() + "\nAddress: " + data.getAddress() + "\nCity: "
+					+ data.getCity() + "\nPostal Code: " + data.getPostalCode() + "\nProvince: " + data.getProvince()
+					+ "\nCountry: " + data.getCountry());
+		}
 	}
 
 	@Override
@@ -256,18 +258,18 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 			JLabel courseCodeLabel = new JLabel("Course Code:");
 			courseCodeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 			courseCodeLabel.setBounds(xCoordinate, yCoordinate, 250, 50);
-			layeredPane.add(courseCodeLabel, Integer.valueOf(1));
+			layeredPane.add(courseCodeLabel, Integer.valueOf(2));
 
 			courseCodeField.setBounds(xCoordinate + 150, yCoordinate, 200, 50);
-			layeredPane.add(courseCodeField, Integer.valueOf(1));
+			layeredPane.add(courseCodeField, Integer.valueOf(2));
 
 			JLabel gradeLabel = new JLabel("Grade:");
 			gradeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
 			gradeLabel.setBounds(xCoordinate + 350, yCoordinate, 250, 50);
-			layeredPane.add(gradeLabel, Integer.valueOf(1));
+			layeredPane.add(gradeLabel, Integer.valueOf(2));
 
 			gradeField.setBounds(xCoordinate + 500, yCoordinate, 200, 50);
-			layeredPane.add(gradeField, Integer.valueOf(1));
+			layeredPane.add(gradeField, Integer.valueOf(2));
 
 			lastGradeField = gradeField;
 		}
