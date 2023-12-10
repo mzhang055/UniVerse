@@ -20,7 +20,7 @@ public class HomeFrame extends JFrame implements ActionListener{
 
 	
 		//
-		setVisible(true);
+		//setVisible(true);
 		
 	}
 

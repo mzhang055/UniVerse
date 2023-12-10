@@ -1,11 +1,9 @@
 package view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -16,8 +14,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
+import javax.swing.JOptionPane; 
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -34,7 +31,15 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField postalCodeField;
 	private JTextField provinceField;
 	private JTextField countryField;
-
+	private JTextField longitudeField;
+	private JTextField latitudeField;
+	
+	
+	//fields for user data
+	private JTextField usernameField;
+	private JTextField passwordField;
+	
+	
 	// fields for user academic information
 	private JTextField numCoursesField;
 	private JButton confirmBtn;
@@ -44,15 +49,14 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField gradeField;
 	private JTextField lastGradeField; // used to track last grade field to add button dynamically
 
-	
-	//constructor
+	// constructor
 	public UserSetUpFrame() {
 		super("User Set Up");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1440, 900);
 
 		// set the background image
-		ImageIcon backgroundImg = new ImageIcon("images/userProfileSetupBg2.png");
+		ImageIcon backgroundImg = new ImageIcon("images/userProfileSetupBg.png");
 		layeredPane = new JLayeredPane();
 		layeredPane.setPreferredSize(new Dimension(backgroundImg.getIconWidth(), backgroundImg.getIconHeight()));
 
@@ -61,9 +65,9 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		Dimension imageSize = new Dimension(backgroundImg.getIconWidth(), backgroundImg.getIconHeight());
 		imageLabel.setPreferredSize(imageSize);
 
-		//set the background colour for all text fields.
-		Color color = new Color(245,245,245);
-		
+		// set the background colour for all text fields.
+		Color color = new Color(245, 245, 245);
+
 		// --- Personal Info
 		// add first name text field
 		firstNameField = new JTextField(); // instantiate the JTextField
@@ -120,10 +124,42 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		countryField.addActionListener(this);
 		countryField.setBackground(color);
 		countryField.setFont(new Font("Arial", Font.PLAIN, 23));
-
+		
+		// add longitude field
+		longitudeField = new JTextField(); // instantiate the JTextField
+		longitudeField.setBounds(100, 830, 500, 80);
+		longitudeField.addActionListener(this);
+		longitudeField.setBackground(color);
+		longitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
+		
+		// add latitude field
+		latitudeField = new JTextField(); // instantiate the JTextField
+		latitudeField.setBounds(745, 830, 500, 80);
+		latitudeField.addActionListener(this);
+		latitudeField.setBackground(color);
+		latitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
+		
+		
+		//---- User Info (username and password)
+		// add username field
+		usernameField = new JTextField(); // instantiate the JTextField
+		usernameField.setBounds(100, 1100, 500, 80);
+		usernameField.addActionListener(this);
+		usernameField.setBackground(color);
+		usernameField.setFont(new Font("Arial", Font.PLAIN, 23));
+		
+		// add password field
+		passwordField = new JTextField(); // instantiate the JTextField
+		passwordField.setBounds(745, 1100, 500, 80);
+		passwordField.addActionListener(this);
+		passwordField.setBackground(color);
+		passwordField.setFont(new Font("Arial", Font.PLAIN, 23));
+		
+		
+		
 		// --- Academic Info
 		numCoursesField = new JTextField();
-		numCoursesField.setBounds(100, 930, 200, 80);
+		numCoursesField.setBounds(100, 1420, 200, 80);
 		numCoursesField.addActionListener(this);
 		numCoursesField.setBackground(color);
 		numCoursesField.setFont(new Font("Arial", Font.PLAIN, 23));
@@ -133,7 +169,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		confirmBtn.setOpaque(false);
 		confirmBtn.setContentAreaFilled(false);
 		confirmBtn.setBorderPainted(false);
-		confirmBtn.setBounds(320, 940, confirmIcon.getIconWidth(), confirmIcon.getIconHeight());
+		confirmBtn.setBounds(320, 1430, confirmIcon.getIconWidth(), confirmIcon.getIconHeight());
 		confirmBtn.addActionListener(this);
 
 		// add components to the layered pane
@@ -146,8 +182,14 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		layeredPane.add(postalCodeField, Integer.valueOf(1));
 		layeredPane.add(provinceField, Integer.valueOf(1));
 		layeredPane.add(countryField, Integer.valueOf(1));
+		layeredPane.add(longitudeField, Integer.valueOf(1));
+		layeredPane.add(latitudeField, Integer.valueOf(1));
 		layeredPane.add(numCoursesField, Integer.valueOf(1));
 		layeredPane.add(confirmBtn, Integer.valueOf(1));
+		
+		//add user info to layered pane
+		layeredPane.add(usernameField, Integer.valueOf(3));
+		layeredPane.add(passwordField, Integer.valueOf(3));
 
 		// add layered pane to scroll pane
 		JScrollPane jsp = new JScrollPane(layeredPane);
@@ -181,8 +223,6 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 					} else {
 						studentData.setGrade(text);
 						courseDataList.add(studentData);
-//						System.out.println(
-//								"Course Code: " + studentData.getCourseCode() + ", Grade: " + studentData.getGrade());
 
 						courseCodeField = null;
 						studentData = new StudentData();
@@ -197,7 +237,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		}
 		System.out.println();
 
-		//collectAndDisplayPersonalData();
+		// collectAndDisplayPersonalData();
 		dispose();
 		new HomeFrame();
 	}
@@ -211,15 +251,18 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		studentData.setPostalCode(postalCodeField.getText().trim());
 		studentData.setProvince(provinceField.getText().trim());
 		studentData.setCountry(countryField.getText().trim());
+		studentData.setCountry(longitudeField.getText().trim());
+		studentData.setCountry(latitudeField.getText().trim());
 
 		personalInfoList.add(studentData);
+		
 
 		// Debugging
 		System.out.println("Personal Information List:");
 		for (StudentData data : personalInfoList) {
 			System.out.println("Unit: " + data.getUnit() + "\nAddress: " + data.getAddress() + "\nCity: "
 					+ data.getCity() + "\nPostal Code: " + data.getPostalCode() + "\nProvince: " + data.getProvince()
-					+ "\nCountry: " + data.getCountry());
+					+ "\nCountry: " + data.getCountry() + "\nLongitude: " + data.getLongitude() + "\nLatitude: " + data.getLatitude());
 		}
 	}
 
@@ -234,11 +277,16 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 			}
 		}
 
+		//when user clicks the get started button, they finish their registration process
 		else if (e.getSource() == getStartedBtn) {
 
 			collectAndDisplayCourseData();
 			collectAndDisplayPersonalData();
 
+		
+			
+			
+			
 			// open home frame and close current frame
 			new HomeFrame();
 			dispose();

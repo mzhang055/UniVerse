@@ -11,6 +11,9 @@ public class StudentData {
 	private String postalCode;
 	private String province;
 	private String country;
+	private String longitude;
+	private String latitude;
+	
 	private String username;
 	private String password;
 	
@@ -114,6 +117,22 @@ public class StudentData {
 
 	public void setGrade(String grade) {
 		this.grade = grade;
+	}
+
+	public String getLongitude() {
+		return longitude;
+	}
+
+	public void setLongitude(String longitude) {
+		this.longitude = longitude;
+	}
+
+	public String getLatitude() {
+		return latitude;
+	}
+
+	public void setLatitude(String latitude) {
+		this.latitude = latitude;
 	}
 	
 	
