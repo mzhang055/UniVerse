@@ -1,3 +1,8 @@
+/* Michelle Zhang
+ * 
+ * Sources used: https://1bestcsharp.blogspot.com/2018/05/java-login-and-register-form-with-mysql-database.html
+ */
+
 package view;
 
 import java.awt.Color;
@@ -7,6 +12,7 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,11 +22,12 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
-import javax.swing.JOptionPane; 
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import controller.ConnectionController;
+import controller.LoginController;
 import model.StudentData;
 
 public class UserSetUpFrame extends JFrame implements ActionListener {
@@ -36,13 +43,11 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField countryField;
 	private JTextField longitudeField;
 	private JTextField latitudeField;
-	
-	
-	//fields for user data
+
+	// fields for user data
 	private JTextField usernameField;
 	private JTextField passwordField;
-	
-	
+
 	// fields for user academic information
 	private JTextField numCoursesField;
 	private JButton confirmBtn;
@@ -51,8 +56,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField courseCodeField;
 	private JTextField gradeField;
 	private JTextField lastGradeField; // used to track last grade field to add button dynamically
-	
-	
+
 	//
 	private String firstName;
 	private String lastName;
@@ -66,7 +70,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private String latitude;
 	private String username;
 	private String password;
-	
+
+	// instance of classes
 	private StudentData studentData;
 
 	// constructor
@@ -134,7 +139,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		postalCodeField.setBackground(color);
 		postalCodeField.setFont(new Font("Arial", Font.PLAIN, 23));
 		postalCode = postalCodeField.getText();
-		
+
 		// add province field
 		provinceField = new JTextField(); // instantiate the JTextField
 		provinceField.setBounds(100, 700, 500, 80);
@@ -150,7 +155,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		countryField.setBackground(color);
 		countryField.setFont(new Font("Arial", Font.PLAIN, 23));
 		country = countryField.getText();
-		
+
 		// add longitude field
 		longitudeField = new JTextField(); // instantiate the JTextField
 		longitudeField.setBounds(100, 830, 500, 80);
@@ -158,7 +163,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		longitudeField.setBackground(color);
 		longitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
 		longitude = longitudeField.getText();
-		
+
 		// add latitude field
 		latitudeField = new JTextField(); // instantiate the JTextField
 		latitudeField.setBounds(745, 830, 500, 80);
@@ -166,9 +171,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		latitudeField.setBackground(color);
 		latitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
 		latitude = latitudeField.getText();
-		
-		
-		//---- User Info (username and password)
+
+		// ---- User Info (username and password)
 		// add username field
 		usernameField = new JTextField(); // instantiate the JTextField
 		usernameField.setBounds(100, 1100, 500, 80);
@@ -176,8 +180,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		usernameField.setBackground(color);
 		usernameField.setFont(new Font("Arial", Font.PLAIN, 23));
 		username = usernameField.getText();
-		//studentData.setUsername(usernameField.getText());
-		
+		// studentData.setUsername(usernameField.getText());
+
 		// add password field
 		passwordField = new JTextField(); // instantiate the JTextField
 		passwordField.setBounds(745, 1100, 500, 80);
@@ -185,10 +189,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		passwordField.setBackground(color);
 		passwordField.setFont(new Font("Arial", Font.PLAIN, 23));
 		password = passwordField.getText();
-		//studentData.setPassword(passwordField.getText());
-		
-		
-		
+		// studentData.setPassword(passwordField.getText());
+
 		// --- Academic Info
 		numCoursesField = new JTextField();
 		numCoursesField.setBounds(100, 1420, 200, 80);
@@ -218,8 +220,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		layeredPane.add(latitudeField, Integer.valueOf(1));
 		layeredPane.add(numCoursesField, Integer.valueOf(1));
 		layeredPane.add(confirmBtn, Integer.valueOf(1));
-		
-		//add user info to layered pane
+
+		// add user info to layered pane
 		layeredPane.add(usernameField, Integer.valueOf(3));
 		layeredPane.add(passwordField, Integer.valueOf(3));
 
@@ -233,8 +235,6 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 		// set frame visible
 		setVisible(true);
-		
-
 
 	}
 
@@ -275,9 +275,9 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		dispose();
 		new HomeFrame();
 	}
-	
+
 	private void collectAndDisplayPersonalData() {
-		
+
 		studentData.setUsername(usernameField.getText());
 		studentData.setPassword(passwordField.getText());
 		studentData.setFirstName(firstNameField.getText());
@@ -290,17 +290,16 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		studentData.setCountry(countryField.getText());
 		studentData.setLongitude(longitudeField.getText());
 		studentData.setLatitude(latitudeField.getText());
-	
 
 		personalInfoList.add(studentData);
-		
 
 		// Debugging
 		System.out.println("Personal Information List:");
 		for (StudentData data : personalInfoList) {
 			System.out.println("Unit: " + data.getUnit() + "\nAddress: " + data.getAddress() + "\nCity: "
 					+ data.getCity() + "\nPostal Code: " + data.getPostalCode() + "\nProvince: " + data.getProvince()
-					+ "\nCountry: " + data.getCountry() + "\nLongitude: " + data.getLongitude() + "\nLatitude: " + data.getLatitude());
+					+ "\nCountry: " + data.getCountry() + "\nLongitude: " + data.getLongitude() + "\nLatitude: "
+					+ data.getLatitude());
 		}
 	}
 
@@ -315,74 +314,45 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 			}
 		}
 
-		//when user clicks the get started button, they finish their registration process
+		// when user clicks the get started button, they finish their registration
+		// process
 		else if (e.getSource() == getStartedBtn) {
 
 			collectAndDisplayCourseData();
 			collectAndDisplayPersonalData();
-			
 
-		
-		//debugging
-		System.out.println();
-		System.out.println("ACTION PERFROMED DEBUG INFO:");
-        System.out.println("First Name: " + studentData.getFirstName());
-        System.out.println("Last Name: " + studentData.getLastName());
-        System.out.println("Unit: " + studentData.getUnit());
-        System.out.println("Address: " + studentData.getAddress());
-        System.out.println("City: " + studentData.getCity());
-        System.out.println("Postal Code: " + studentData.getPostalCode());
-        System.out.println("Province: " + studentData.getProvince());
-        System.out.println("Country: " + studentData.getCountry());
-        System.out.println("Longitude: " + studentData.getLongitude());
-        System.out.println("Latitude: " + studentData.getLatitude());
-        System.out.println("username: " + studentData.getUsername());
-        System.out.println("password: " + studentData.getPassword());
+			// debugging
+			System.out.println();
+			System.out.println("ACTION PERFROMED DEBUG INFO:");
+			System.out.println("First Name: " + studentData.getFirstName());
+			System.out.println("Last Name: " + studentData.getLastName());
+			System.out.println("Unit: " + studentData.getUnit());
+			System.out.println("Address: " + studentData.getAddress());
+			System.out.println("City: " + studentData.getCity());
+			System.out.println("Postal Code: " + studentData.getPostalCode());
+			System.out.println("Province: " + studentData.getProvince());
+			System.out.println("Country: " + studentData.getCountry());
+			System.out.println("Longitude: " + studentData.getLongitude());
+			System.out.println("Latitude: " + studentData.getLatitude());
+			System.out.println("username: " + studentData.getUsername());
+			System.out.println("password: " + studentData.getPassword());
 
-		
-        
-        if(studentData.getUsername().equals("")) {
-        	JOptionPane.showMessageDialog(null, "Enter a valid username. It cannot be blank.");
-        }
-        
-        else if (studentData.getPassword().equals("")){
-        	JOptionPane.showMessageDialog(null, "Enter a valid password. It cannot be blank.");
-        }
-       
-        
-        
-		PreparedStatement ps;
-		String query = "INSERT INTO `app_users`(`firstName`, `lastName`, `unit`, `address`, `city`, `postalCode`, `province`, `country`, `longitude`, `latitude`, `username`, `password`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
-			
-		
-		try {
-			ps = ConnectionController.getConnection().prepareStatement(query);
-			
-			ps.setString(1,studentData.getFirstName());
-			ps.setString(2,studentData.getLastName());
-			ps.setString(3, studentData.getUnit());
-			ps.setString(4,studentData.getAddress());
-			ps.setString(5,studentData.getCity());
-			ps.setString(6,studentData.getPostalCode());
-			ps.setString(7,studentData.getProvince());
-			ps.setString(8,studentData.getCountry());
-			ps.setString(9,studentData.getLongitude());
-			ps.setString(10,studentData.getLatitude());
-			ps.setString(11,studentData.getUsername());
-			ps.setString(12,studentData.getPassword());
-
-			
-			if(ps.executeUpdate() > 0) {
-				JOptionPane.showMessageDialog(null, "New User Added");
+			if (studentData.getUsername().equals("")) {
+				JOptionPane.showMessageDialog(null, "Enter a valid username. It cannot be blank.");
 			}
-		
-			
-		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-			
-			
+
+			else if (studentData.getPassword().equals("")) {
+				JOptionPane.showMessageDialog(null, "Enter a valid password. It cannot be blank.");
+			}
+
+			else if (LoginController.checkUsername(studentData.getUsername())) {
+				JOptionPane.showMessageDialog(null, "This username already exists.");
+			}
+
+			else {
+				LoginController.addUserToDatabase(studentData);
+			}
+
 			// open home frame and close current frame
 			new HomeFrame();
 			dispose();
@@ -436,6 +406,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		repaint();
 	}
 
+	//REMOVE LTR
 	public static void main(String[] args) {
 		new UserSetUpFrame();
 	}

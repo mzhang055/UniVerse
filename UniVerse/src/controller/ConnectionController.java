@@ -1,3 +1,9 @@
+/* Michelle Zhang
+ * 
+ * Sources used: https://1bestcsharp.blogspot.com/2018/05/java-login-and-register-form-with-mysql-database.html
+ * 
+ */
+
 package controller;
 
 import java.sql.Connection;
