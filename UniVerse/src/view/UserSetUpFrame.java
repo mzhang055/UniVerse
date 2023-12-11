@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import controller.ConnectionController;
 import model.StudentData;
 
 public class UserSetUpFrame extends JFrame implements ActionListener {
@@ -48,6 +51,23 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private JTextField courseCodeField;
 	private JTextField gradeField;
 	private JTextField lastGradeField; // used to track last grade field to add button dynamically
+	
+	
+	//
+	private String firstName;
+	private String lastName;
+	private String unit;
+	private String address;
+	private String city;
+	private String postalCode;
+	private String province;
+	private String country;
+	private String longitude;
+	private String latitude;
+	private String username;
+	private String password;
+	
+	private StudentData studentData;
 
 	// constructor
 	public UserSetUpFrame() {
@@ -89,6 +109,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		unitField.addActionListener(this);
 		unitField.setBackground(color);
 		unitField.setFont(new Font("Arial", Font.PLAIN, 23));
+		unit = unitField.getText();
 
 		// add address field
 		addressField = new JTextField(); // instantiate the JTextField
@@ -96,6 +117,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		addressField.addActionListener(this);
 		addressField.setBackground(color);
 		addressField.setFont(new Font("Arial", Font.PLAIN, 23));
+		address = addressField.getText();
 
 		// add city field
 		cityField = new JTextField(); // instantiate the JTextField
@@ -103,6 +125,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		cityField.addActionListener(this);
 		cityField.setBackground(color);
 		cityField.setFont(new Font("Arial", Font.PLAIN, 23));
+		city = cityField.getText();
 
 		// add postal code field
 		postalCodeField = new JTextField(); // instantiate the JTextField
@@ -110,13 +133,15 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		postalCodeField.addActionListener(this);
 		postalCodeField.setBackground(color);
 		postalCodeField.setFont(new Font("Arial", Font.PLAIN, 23));
-
+		postalCode = postalCodeField.getText();
+		
 		// add province field
 		provinceField = new JTextField(); // instantiate the JTextField
 		provinceField.setBounds(100, 700, 500, 80);
 		provinceField.addActionListener(this);
 		provinceField.setBackground(color);
 		provinceField.setFont(new Font("Arial", Font.PLAIN, 23));
+		province = provinceField.getText();
 
 		// add country field
 		countryField = new JTextField(); // instantiate the JTextField
@@ -124,6 +149,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		countryField.addActionListener(this);
 		countryField.setBackground(color);
 		countryField.setFont(new Font("Arial", Font.PLAIN, 23));
+		country = countryField.getText();
 		
 		// add longitude field
 		longitudeField = new JTextField(); // instantiate the JTextField
@@ -131,6 +157,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		longitudeField.addActionListener(this);
 		longitudeField.setBackground(color);
 		longitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
+		longitude = longitudeField.getText();
 		
 		// add latitude field
 		latitudeField = new JTextField(); // instantiate the JTextField
@@ -138,6 +165,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		latitudeField.addActionListener(this);
 		latitudeField.setBackground(color);
 		latitudeField.setFont(new Font("Arial", Font.PLAIN, 23));
+		latitude = latitudeField.getText();
 		
 		
 		//---- User Info (username and password)
@@ -147,6 +175,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		usernameField.addActionListener(this);
 		usernameField.setBackground(color);
 		usernameField.setFont(new Font("Arial", Font.PLAIN, 23));
+		username = usernameField.getText();
+		//studentData.setUsername(usernameField.getText());
 		
 		// add password field
 		passwordField = new JTextField(); // instantiate the JTextField
@@ -154,6 +184,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		passwordField.addActionListener(this);
 		passwordField.setBackground(color);
 		passwordField.setFont(new Font("Arial", Font.PLAIN, 23));
+		password = passwordField.getText();
+		//studentData.setPassword(passwordField.getText());
 		
 		
 		
@@ -201,6 +233,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 		// set frame visible
 		setVisible(true);
+		
+
 
 	}
 
@@ -208,7 +242,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private List<StudentData> personalInfoList = new ArrayList<>();
 
 	private void collectAndDisplayCourseData() {
-		StudentData studentData = new StudentData();
+		studentData = new StudentData();
 		JTextField courseCodeField = null;
 
 		for (Component component : layeredPane.getComponentsInLayer(Integer.valueOf(2))) {
@@ -241,18 +275,22 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		dispose();
 		new HomeFrame();
 	}
-
+	
 	private void collectAndDisplayPersonalData() {
-		StudentData studentData = new StudentData();
-
-		studentData.setUnit(unitField.getText().trim());
-		studentData.setAddress(addressField.getText().trim());
-		studentData.setCity(cityField.getText().trim());
-		studentData.setPostalCode(postalCodeField.getText().trim());
-		studentData.setProvince(provinceField.getText().trim());
-		studentData.setCountry(countryField.getText().trim());
-		studentData.setCountry(longitudeField.getText().trim());
-		studentData.setCountry(latitudeField.getText().trim());
+		
+		studentData.setUsername(usernameField.getText());
+		studentData.setPassword(passwordField.getText());
+		studentData.setFirstName(firstNameField.getText());
+		studentData.setLastName(lastNameField.getText());
+		studentData.setUnit(unitField.getText());
+		studentData.setAddress(addressField.getText());
+		studentData.setCity(cityField.getText());
+		studentData.setPostalCode(postalCodeField.getText());
+		studentData.setProvince(provinceField.getText());
+		studentData.setCountry(countryField.getText());
+		studentData.setLongitude(longitudeField.getText());
+		studentData.setLatitude(latitudeField.getText());
+	
 
 		personalInfoList.add(studentData);
 		
@@ -282,9 +320,56 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 			collectAndDisplayCourseData();
 			collectAndDisplayPersonalData();
+			
 
 		
+		//debugging
+		System.out.println();
+		System.out.println("ACTION PERFROMED DEBUG INFO:");
+        System.out.println("First Name: " + studentData.getFirstName());
+        System.out.println("Last Name: " + studentData.getLastName());
+        System.out.println("Unit: " + studentData.getUnit());
+        System.out.println("Address: " + studentData.getAddress());
+        System.out.println("City: " + studentData.getCity());
+        System.out.println("Postal Code: " + studentData.getPostalCode());
+        System.out.println("Province: " + studentData.getProvince());
+        System.out.println("Country: " + studentData.getCountry());
+        System.out.println("Longitude: " + studentData.getLongitude());
+        System.out.println("Latitude: " + studentData.getLatitude());
+        System.out.println("username: " + studentData.getUsername());
+        System.out.println("password: " + studentData.getPassword());
+
+		
+		PreparedStatement ps;
+		String query = "INSERT INTO `app_users`(`firstName`, `lastName`, `unit`, `address`, `city`, `postalCode`, `province`, `country`, `longitude`, `latitude`, `username`, `password`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 			
+		
+		try {
+			ps = ConnectionController.getConnection().prepareStatement(query);
+			
+			ps.setString(1,studentData.getFirstName());
+			ps.setString(2,studentData.getLastName());
+			ps.setString(3, studentData.getUnit());
+			ps.setString(4,studentData.getAddress());
+			ps.setString(5,studentData.getCity());
+			ps.setString(6,studentData.getPostalCode());
+			ps.setString(7,studentData.getProvince());
+			ps.setString(8,studentData.getCountry());
+			ps.setString(9,studentData.getLongitude());
+			ps.setString(10,studentData.getLatitude());
+			ps.setString(11,studentData.getUsername());
+			ps.setString(12,studentData.getPassword());
+
+			
+			if(ps.executeUpdate() > 0) {
+				JOptionPane.showMessageDialog(null, "New User Added");
+			}
+		
+			
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
 			
 			
 			// open home frame and close current frame

@@ -10,8 +10,8 @@ public class ConnectionController {
 		Connection con = null;
 		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			con = DriverManager.getConnection("jdbc:mysql://localhost/users", "mzhang055", "Michelle09..");
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			con = DriverManager.getConnection("jdbc:mysql://localhost/users", "root", "");
 			
 			
 		} catch (Exception ex) {
