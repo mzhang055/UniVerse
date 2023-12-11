@@ -340,6 +340,17 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
         System.out.println("password: " + studentData.getPassword());
 
 		
+        
+        if(studentData.getUsername().equals("")) {
+        	JOptionPane.showMessageDialog(null, "Enter a valid username. It cannot be blank.");
+        }
+        
+        else if (studentData.getPassword().equals("")){
+        	JOptionPane.showMessageDialog(null, "Enter a valid password. It cannot be blank.");
+        }
+       
+        
+        
 		PreparedStatement ps;
 		String query = "INSERT INTO `app_users`(`firstName`, `lastName`, `unit`, `address`, `city`, `postalCode`, `province`, `country`, `longitude`, `latitude`, `username`, `password`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 			
