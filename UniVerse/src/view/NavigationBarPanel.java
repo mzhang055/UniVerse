@@ -25,7 +25,7 @@ public class NavigationBarPanel extends JPanel implements ActionListener {
 
 		// set font size for text buttons
 		Font buttonFont = new Font("Arial", Font.BOLD, 18);
-		Color fontColor = Color.decode("#587494"); // Set your desired hex color code
+		Color fontColor = Color.decode("#587494"); 
 
 		browseProgramsBtn.setFont(buttonFont);
 		browseProgramsBtn.setForeground(fontColor);
