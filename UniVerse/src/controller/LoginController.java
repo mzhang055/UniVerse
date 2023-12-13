@@ -8,28 +8,25 @@ import javax.swing.JOptionPane;
 
 import model.StudentData;
 
-
 public class LoginController {
 
-	
-	
-	//checks if a username already exists
+	// checks if a username already exists
 	public static boolean checkUsername(String username) {
 		PreparedStatement ps;
 		ResultSet rs;
 		boolean checkUser = false;
-		
+
 		String query = "SELECT * FROM `app_users` WHERE `username` =?";
-		
+
 		try {
 			ps = ConnectionController.getConnection().prepareStatement(query);
 			ps.setString(1, username);
-			
+
 			rs = ps.executeQuery();
-			
-			if(rs.next()) {
+
+			if (rs.next()) {
 				checkUser = true;
-				
+
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
@@ -37,12 +34,11 @@ public class LoginController {
 		}
 		return checkUser;
 
-
 	}
-	
-	//add user to the mysql database
+
+	// add user to the mysql database
 	public static void addUserToDatabase(StudentData studentData) {
-		
+
 		PreparedStatement ps;
 		String query = "INSERT INTO `app_users`(`firstName`, `lastName`, `unit`, `address`, `city`, `postalCode`, `province`, `country`, `longitude`, `latitude`, `username`, `password`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)";
 
@@ -70,7 +66,7 @@ public class LoginController {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 	}
 
 }

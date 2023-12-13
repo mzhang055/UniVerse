@@ -39,7 +39,7 @@ public class NavigationBarPanel extends JPanel implements ActionListener {
 		profileBtn.setForeground(fontColor);
 
 		// set layout manager and space out buttons
-		setLayout(new FlowLayout(FlowLayout.CENTER, 90, 10));
+		setLayout(new FlowLayout(FlowLayout.CENTER, 80, 10));
 
 		// add buttons to panel
 		add(homeBtn);

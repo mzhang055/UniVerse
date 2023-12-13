@@ -22,6 +22,7 @@ import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import controller.LoginController;
 import model.StudentData;
@@ -234,8 +235,8 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 	}
 
-	private List<StudentData> courseDataList = new ArrayList<>();
-	private List<StudentData> personalInfoList = new ArrayList<>();
+	public static List<StudentData> courseDataList = new ArrayList<>();
+	public static List<StudentData> personalInfoList = new ArrayList<>();
 
 	private void collectAndDisplayCourseData() {
 		studentData = new StudentData();
@@ -267,9 +268,6 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		}
 		System.out.println();
 
-		// collectAndDisplayPersonalData();
-		dispose();
-		new HomeFrame();
 	}
 
 	private void collectAndDisplayPersonalData() {
@@ -349,9 +347,11 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 				LoginController.addUserToDatabase(studentData);
 			}
 
-			// open home frame and close current frame
-			new HomeFrame();
-			dispose();
+			
+		    SwingUtilities.invokeLater(() -> {
+		    	new HomeFrame(studentData.getFirstName());
+				dispose();
+		    });
 		}
 	}
 
@@ -363,7 +363,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 			gradeField = new JTextField();
 
 			int xCoordinate = 100;
-			int yCoordinate = 1100 + i * 100; // create even spacing
+			int yCoordinate = 1550 + i * 100; // create even spacing
 
 			JLabel courseCodeLabel = new JLabel("Course Code:");
 			courseCodeLabel.setFont(new Font("Arial", Font.PLAIN, 20));
@@ -402,9 +402,6 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		repaint();
 	}
 
-	//REMOVE LTR
-	public static void main(String[] args) {
-		new UserSetUpFrame();
-	}
+
 
 }

@@ -15,15 +15,17 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JLayeredPane;
 import javax.swing.JOptionPane;
+import javax.swing.JPasswordField;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.SwingUtilities;
 
 import controller.ConnectionController;
 import model.StudentData;
 
 public class WelcomeFrame extends JFrame implements ActionListener {
 	private JTextField usernameField;
-	private JTextField passwordField;
+	private JPasswordField passwordField;
 	private StudentData studentData; // create an instance of StudentData class
 	private JButton getStartedBtn;
 	private JButton signUpBtn;
@@ -54,7 +56,7 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 		usernameField.setBackground(Color.LIGHT_GRAY);
 		usernameField.setFont(new Font("Arial", Font.PLAIN, 23));
 
-		passwordField = new JTextField(); // instantiate the JTextField
+		passwordField = new JPasswordField(); // instantiate the JTextField
 		passwordField.setBounds(85, 1600, 600, 80);
 		passwordField.addActionListener(this);
 		passwordField.setBackground(Color.LIGHT_GRAY);
@@ -105,7 +107,9 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 		if (e.getSource() == getStartedBtn) {
 			// get the data the user entered in the text fields
 			String dataUsername = usernameField.getText().trim();
-			String dataPassword = passwordField.getText().trim();
+			char[] passwordChars = passwordField.getPassword();
+			String dataPassword = new String(passwordChars);
+
 			System.out.println("Data submitted - Username: " + dataUsername + ", Password: " + dataPassword); // testing
 
 			PreparedStatement ps;
@@ -122,16 +126,24 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 				rs = ps.executeQuery();
 
 				if (rs.next()) {
+					String firstName = rs.getString("firstName");
 					JOptionPane.showMessageDialog(null, "Successful Login");
-						// open the home screen
-						new HomeFrame();
-						dispose(); // close current frame
+					// close current frame
+					// swing utilities is needed here to ensure current frame is disposed
+					// since this occurs after the joptionpane message
+					SwingUtilities.invokeLater(() -> {
+						dispose();
+						new HomeFrame(firstName);
+					});
+
 				}
 
 				else {
 					JOptionPane.showMessageDialog(null, "Invalid Login.");
-					new WelcomeFrame();
-					dispose();
+					SwingUtilities.invokeLater(() -> {
+						dispose();
+						new WelcomeFrame();
+					});
 				}
 			} catch (SQLException e1) {
 				// TODO Auto-generated catch block
@@ -148,7 +160,4 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 		}
 	}
 
-	public static void main(String[] args) {
-		new WelcomeFrame();
-	}
 }
