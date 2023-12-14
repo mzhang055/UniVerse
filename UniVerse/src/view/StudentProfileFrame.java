@@ -24,17 +24,6 @@ public class StudentProfileFrame extends JFrame implements ActionListener{
 	
 	public static void main(String[] args) {
 		
-		UserSetUpFrame user = new UserSetUpFrame();
-		
-		// debug
-		System.out.println("Course Data List:");
-		for (StudentData data : user.courseDataList) {
-			System.out.println("Course Code: " + data.getCourseCode() + ", Grade: " + data.getGrade());
-		}
-		System.out.println();
-
 	}
-	
-	
 
 }

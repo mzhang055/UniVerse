@@ -1,6 +1,10 @@
 package view;
 
 import javax.swing.*;
+
+import controller.MapController;
+import model.StudentData;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -9,6 +13,8 @@ public class NavigationBarPanel extends JPanel implements ActionListener {
 	
 	private JButton homeBtn, browseProgramsBtn, universityMapBtn, surveyBtn, 
 	browseJobsBtn, profileBtn;
+	
+
 
 	public NavigationBarPanel() {
 
@@ -92,7 +98,11 @@ public class NavigationBarPanel extends JPanel implements ActionListener {
 
 		// open interactive map
 		else if (e.getSource() == universityMapBtn) {
-			System.out.println("uni map btn clicked"); // replace
+			
+		    SwingUtilities.invokeLater(() -> {
+		    	new MapController(UserSetUpFrame.studentData.getLongitude(), UserSetUpFrame.studentData.getLatitude());
+		    });
+		
 		}
 
 		// open survey button

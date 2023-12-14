@@ -69,7 +69,7 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 	private String password;
 
 	// instance of classes
-	private StudentData studentData;
+	public static StudentData studentData;
 
 	// constructor
 	public UserSetUpFrame() {
@@ -345,13 +345,14 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 
 			else {
 				LoginController.addUserToDatabase(studentData);
+				
+			    SwingUtilities.invokeLater(() -> {
+			    	new HomeFrame(studentData.getFirstName());
+					dispose();
+			    });
 			}
 
-			
-		    SwingUtilities.invokeLater(() -> {
-		    	new HomeFrame(studentData.getFirstName());
-				dispose();
-		    });
+
 		}
 	}
 
@@ -400,6 +401,22 @@ public class UserSetUpFrame extends JFrame implements ActionListener {
 		// repaint the frame
 		revalidate();
 		repaint();
+	}
+
+	public static List<StudentData> getCourseDataList() {
+		return courseDataList;
+	}
+
+	public static void setCourseDataList(List<StudentData> courseDataList) {
+		UserSetUpFrame.courseDataList = courseDataList;
+	}
+
+	public static List<StudentData> getPersonalInfoList() {
+		return personalInfoList;
+	}
+
+	public static void setPersonalInfoList(List<StudentData> personalInfoList) {
+		UserSetUpFrame.personalInfoList = personalInfoList;
 	}
 
 
