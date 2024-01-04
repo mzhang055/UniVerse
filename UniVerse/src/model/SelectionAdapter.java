@@ -7,6 +7,7 @@ import java.awt.geom.Point2D;
 import org.jxmapviewer.JXMapViewer;
 
 //This class allows the user to move and zoom in and out of the map 
+//resources: https://github.com/msteiger/jxmapviewer2
 public class SelectionAdapter extends MouseAdapter {
 
 	private boolean dragging;

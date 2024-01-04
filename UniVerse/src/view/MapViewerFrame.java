@@ -4,17 +4,21 @@ import java.awt.Color;
 
 import javax.swing.JFrame;
 
+//this class puts both the map and nav bar together on a frame
 public class MapViewerFrame extends JFrame {
 	
+	//fields
 	private NavigationBarPanel navBarPanel = new NavigationBarPanel(); 
 	private MapViewerPanel mapPanel = new MapViewerPanel(); 
 	
-
+	//constructor
 	public MapViewerFrame() {
 		
+		//set nav bar
 		navBarPanel.setBounds(0, 0, 1440, 90);
 		add(navBarPanel); 
 		
+		//set map
 		mapPanel.setBounds(0, 90, 1440, 810);
 		add(mapPanel); 
 		
@@ -27,6 +31,7 @@ public class MapViewerFrame extends JFrame {
 		
 	}
 	
+	//getters and setters
 	public NavigationBarPanel getNavBarPanel() {
 		return navBarPanel;
 	}

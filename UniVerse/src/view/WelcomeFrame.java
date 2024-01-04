@@ -1,3 +1,9 @@
+/*
+ * Michelle Zhang
+ * This class is responsible for displaying the welcome frame where the users can sign in
+ * or create an account and learn about our application
+ */
+
 package view;
 
 import java.awt.Color;
@@ -21,23 +27,31 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 import controller.ConnectionController;
+import controller.LoginController;
 import model.StudentData;
 
 public class WelcomeFrame extends JFrame implements ActionListener {
+	
+	//fields
 	private JTextField usernameField;
 	private JPasswordField passwordField;
-	private StudentData studentData; // create an instance of StudentData class
 	private JButton getStartedBtn;
 	private JButton signUpBtn;
+	public static boolean created = false; //used to keep track if a frame was created.
+											//used in nav bar panel
+	public static String dataUsername;
+	
+	//instance of classes
+	public static StudentData studentData = new StudentData();
+	public static HomeFrame homeFrame;	
 
+
+	//constructor
 	public WelcomeFrame() {
 		// set up the frame
 		super("Welcome Frame");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(1440, 900);
-
-		// create an instance of student data class
-		studentData = new StudentData();
 
 		// set up the background image
 		ImageIcon backgroundImg = new ImageIcon("images/welcomeFrameBg.png");
@@ -100,44 +114,56 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 
 	}
 
+	//handles all user actions
 	@Override
 	public void actionPerformed(ActionEvent e) {
 
 		// handle case where get started button is clicked
 		if (e.getSource() == getStartedBtn) {
 			// get the data the user entered in the text fields
-			String dataUsername = usernameField.getText().trim();
+			dataUsername = usernameField.getText().trim();
+			
+			//convert the character array to a string
+			//they were chracters initially in order to hide what the user was entering
+			//in that field
 			char[] passwordChars = passwordField.getPassword();
 			String dataPassword = new String(passwordChars);
 
-			System.out.println("Data submitted - Username: " + dataUsername + ", Password: " + dataPassword); // testing
+			PreparedStatement ps; //execute query
+			ResultSet rs; //store query
 
-			PreparedStatement ps;
-			ResultSet rs;
-
+			//SQL query to select user data based on the username and password
 			String query = "SELECT * FROM `app_users` WHERE `username` =? AND `password` =?";
 
 			try {
+				//get prepared statement by connecting with database
 				ps = ConnectionController.getConnection().prepareStatement(query);
-
+				
+				//set data
 				ps.setString(1, dataUsername);
 				ps.setString(2, dataPassword);
 
+				//execute the query
 				rs = ps.executeQuery();
 
+				//if result set has data, display message to user
 				if (rs.next()) {
 					String firstName = rs.getString("firstName");
 					JOptionPane.showMessageDialog(null, "Successful Login");
+					
 					// close current frame
 					// swing utilities is needed here to ensure current frame is disposed
 					// since this occurs after the joptionpane message
 					SwingUtilities.invokeLater(() -> {
+						String username = WelcomeFrame.getDataUsername();
+						StudentData userData = LoginController.getUserData(username);
 						dispose();
-						new HomeFrame(firstName);
+						homeFrame = new HomeFrame(firstName, userData.getChoice1(), userData.getChoice2(),userData.getChoice3());
 					});
 
 				}
 
+				//display error message to user
 				else {
 					JOptionPane.showMessageDialog(null, "Invalid Login.");
 					SwingUtilities.invokeLater(() -> {
@@ -160,4 +186,15 @@ public class WelcomeFrame extends JFrame implements ActionListener {
 		}
 	}
 
+	
+	//setters and getters
+	public static String getDataUsername() {
+		return dataUsername;
+	}
+
+	public void setDataUsername(String dataUsername) {
+		WelcomeFrame.dataUsername = dataUsername;
+	}
+
+	
 }

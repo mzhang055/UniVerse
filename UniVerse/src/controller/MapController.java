@@ -1,5 +1,8 @@
+
 package controller;
 
+import java.awt.Checkbox;
+import java.awt.CheckboxGroup;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -7,9 +10,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.swing.ButtonGroup;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.event.MouseInputListener;
 
 import org.jxmapviewer.OSMTileFactoryInfo;
@@ -31,8 +37,10 @@ import model.SwingWaypointOverlayPainter;
 import model.University;
 import model.UniversityFileInput;
 import view.MapViewerFrame;
-import view.UserSetUpFrame;
+import view.WelcomeFrame;
 
+//Samiksha
+//This class controls the entire program 
 public class MapController implements ActionListener {
 
 	// this array stores all the universities + their specific info
@@ -49,40 +57,91 @@ public class MapController implements ActionListener {
 	// this array stores all university locations + user's current location
 	public static GeoPosition[] locationsArray = new GeoPosition[23];
 
-	// this ArrayList stores the user's bookmarked universities
-	public static ArrayList<Integer> bookmarked = new ArrayList<Integer>();
+	// this ArrayList stores the user's top 5 universities
+	public static int[] bookmarked = new int[5];
 
+	// initialize user's current location (testing purposes)
 	public static GeoPosition currentLocation;
 
-	public MapViewerFrame mapFrame;
+	public static int[] updatedBookmarkedArray = new int[5];
+	// holds university names so that users can click which ones they want to
+	// unbookmark
+	JRadioButton[] uniBookmarks = new JRadioButton[5];
+	ButtonGroup checkBoxesUni = new ButtonGroup();
 
-	public MapController(String longitude, String latitude) {
+	// instructions for how to use the map
+	String instructions = "Welcome to the University Interactive Map!"
+			+ "To zoom in and out on the map, use your mousepad. As you can see, most University locations in Ontario are here!\n"
+			+ "To learn more about a specific university, click on the icon where you can view the general and other important info!\n"
+			+ "Your current location is the same as the one in your student profile, and can be identified by the red location pin. "
+			+ "All of the distances between universities are based on your current location\n"
+			+ "To view universities within a certain radius, feel free to click on the options on the top left of the map.\n"
+			+ "To view bookmarked universities, click on the button in the middle where you will be able to see all of the University Icons you have bookmarked.\n"
+			+ "To unbookmark universities, click the 'unbookmark' button. You can bookmark a MAXIMUM of 5 universities.\n"
+			+ "If you would like to see these instructions again, click the 'HELP' button on the top right of the screen. Enjoy exploring the map!";
+	// create instance of the map frame
+	public static MapViewerFrame mapFrame;
 
-		currentLocation = new GeoPosition(Double.parseDouble(longitude),
-				Double.parseDouble(latitude));
-		
-		// fills University array
-		new UniversityFileInput();
+	public MapController(String longitude, String latitude, String bookmark1, String bookmark2, String bookmark3,
+	        String bookmark4, String bookmark5) {
 
-		mapFrame = new MapViewerFrame();
+	    currentLocation = new GeoPosition(Double.parseDouble(longitude), Double.parseDouble(latitude));
 
-		// initialize each element in array to false
-		for (int index = 0; index < rangeDistance.length; index++) {
+	    // fills University array
+	    new UniversityFileInput();
 
-			rangeDistance[index] = false;
-		}
+	    mapFrame = new MapViewerFrame();
 
-		// ActionListeners
-		mapFrame.getMapPanel().getHelp().addActionListener(this);
-		mapFrame.getMapPanel().getBookmark().addActionListener(this);
-		mapFrame.getMapPanel().getDistanceRadius().addActionListener(this);
-		
+	    // initialize each element in book mark array to -1
+	    for (int index = 0; index < bookmarked.length; index++) {
+	        bookmarked[index] = -1;
+	    }
 
-		
-		
-		System.out.println(longitude);
-		System.out.println(latitude);
-		
+	    //--- michelle
+	    //checks if the bookmark is not null. if not, convert string to integer value
+	    //if it is null, it assigns the value of -1
+	    //this ensures that values in the bookmarked array are integer values
+	    bookmarked[0] = (bookmark1 != null) ? Integer.parseInt(bookmark1) : -1;
+	    bookmarked[1] = (bookmark2 != null) ? Integer.parseInt(bookmark2) : -1;
+	    bookmarked[2] = (bookmark3 != null) ? Integer.parseInt(bookmark3) : -1;
+	    bookmarked[3] = (bookmark4 != null) ? Integer.parseInt(bookmark4) : -1;
+	    bookmarked[4] = (bookmark5 != null) ? Integer.parseInt(bookmark5) : -1;
+	    //-- end
+	    
+	    // initialize each element in array to false
+	    for (int index = 0; index < rangeDistance.length; index++) {
+	        rangeDistance[index] = false;
+	    }
+
+	    // ActionListeners
+	    mapFrame.getMapPanel().getHelp().addActionListener(this);
+	    mapFrame.getMapPanel().getBookmark().addActionListener(this);
+	    mapFrame.getMapPanel().getDistanceRadius().addActionListener(this);
+	    mapFrame.getMapPanel().getUnbookmarked().addActionListener(this);
+	}
+
+	public static void updateBookmarks(String username) {
+		updatedBookmarkedArray = getBookmarkedArray();
+
+		// debug
+		System.out.println("Updated Bookmarked Array: " + Arrays.toString(updatedBookmarkedArray));
+
+		LoginController.updateBookmarks(username, updatedBookmarkedArray[0], updatedBookmarkedArray[1],
+				updatedBookmarkedArray[2], updatedBookmarkedArray[3], updatedBookmarkedArray[4]);
+
+	}
+
+	private static int[] getBookmarkedArray() {
+		int[] bookmarkedArray = new int[5];
+
+		// get all bookmarked values in the array
+		bookmarkedArray[0] = bookmarked[0];
+		bookmarkedArray[1] = bookmarked[1];
+		bookmarkedArray[2] = bookmarked[2];
+		bookmarkedArray[3] = bookmarked[3];
+		bookmarkedArray[4] = bookmarked[4];
+
+		return bookmarkedArray;
 	}
 
 	// ActionListener
@@ -92,8 +151,8 @@ public class MapController implements ActionListener {
 		// if help button is clicked
 		if (e.getSource() == mapFrame.getMapPanel().getHelp()) {
 
-			// call method to display first set of instructions
-			displayInstructions();
+			// display instructions
+			JOptionPane.showMessageDialog(mapFrame, instructions);
 
 		}
 
@@ -121,182 +180,80 @@ public class MapController implements ActionListener {
 			mapFrame.getMapPanel().addLocation(true);
 
 		}
-
 		// if bookmark button is picked
 		else if (e.getSource() == mapFrame.getMapPanel().getBookmark()) {
+		    // create JPanel
+		    JPanel bookmarkedPane = new JPanel();
+
+		    // add all images to the JPanel
+		    for (int i = 0; i < bookmarked.length; i++) {
+		        // check to see if they have bookmarked a university and add all of that info onto the panel
+		        if (bookmarked[i] != -1 && universityArray[bookmarked[i]] != null) {
+		            System.out.println(universityArray[bookmarked[i]].getImage());
+		            JLabel image = new JLabel(universityArray[bookmarked[i]].getLogo());
+		            image.setSize(60, 60);
+		            bookmarkedPane.add(image);
+		        }
+		        // if nothing bookmarked, move onto the next iteration
+		        else
+		            continue;
+		    }
+
+		    // display in a JOptionPane
+		    JOptionPane.showMessageDialog(mapFrame, bookmarkedPane, "Bookmarked Universities", 1);
+		}
+
+
+		// if unbookmark button is clicked
+		else if (e.getSource() == mapFrame.getMapPanel().getUnbookmarked()) {
 
 			// create JPanel
-			JPanel bookmarkedPane = new JPanel();
+			JPanel unbookmarkedPane = new JPanel();
 
-			// add all images to the JPanel
-			for (int i = 0; i < bookmarked.size(); i++) {
-				JLabel image = new JLabel(universityArray[bookmarked.get(i)].getLogo());
-				image.setSize(60, 60);
-				bookmarkedPane.add(image);
+			for (int index = 0; index < uniBookmarks.length; index++) {
+
+				// adds new radio buttton and adds it to group
+				uniBookmarks[index] = new JRadioButton();
+				uniBookmarks[index].addActionListener(this);
+				checkBoxesUni.add(uniBookmarks[index]);
+
+				// if there is bookmarked university, add name to panel
+				if (bookmarked[index] != -1) {
+					uniBookmarks[index].setText(universityArray[bookmarked[index]].getName());
+					unbookmarkedPane.add(uniBookmarks[index]);
+				}
+
+				// or else continue to next iteration
+				else
+					continue;
+
+			}
+
+			// choices on JDialog
+			Object[] options = { "OK" };
+
+			// displays general information of university
+			int button = JOptionPane.showOptionDialog(null, unbookmarkedPane, "Unbookmark Universities",
+					JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
+
+			if (button == 0) {
+
+				// checks to see which radio button is picked
+				for (int index = 0; index < uniBookmarks.length; index++) {
+
+					if (uniBookmarks[index].isSelected() && uniBookmarks[index] != null) {
+
+						// removes the university from both bookmark and unbookmark panels
+						uniBookmarks[index] = null;
+						bookmarked[index] = -1;
+					}
+
+				}
+
 			}
 
 			// display in a JOptionPane
-			JOptionPane.showMessageDialog(mapFrame, bookmarkedPane, "Bookmarked Universities", 1);
-
-		}
-
-	}
-
-	// This method displays the first set of instructions
-	private void displayInstructions() {
-
-		Object[] options = { "Next" }; // only next button option
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"Welcome to the University Interactive Map! Click Next to look at further instructions!",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, // do not use
-																											// a custom
-																											// Icon
-				options, // the titles of buttons
-				options[0]); // default button title
-
-		// if next button is clicked, open second instructions page
-		if (button == 0) {
-
-			displayInstructions2();
-		}
-
-	}
-
-	// This method displays the second set of instructions
-	private void displayInstructions2() {
-
-		Object[] options = { "Next", "Back" }; // the titles of buttons
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"To zoom in and out on the map, use your mousepad. As you can see, most University locations in Ontario are here "
-						+ "and their icons.",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if next button is clicked, open third instructions page
-		if (button == 0) {
-
-			displayInstructions3();
-
-		}
-
-		// if back button is clicked, open first instructions page
-		else if (button == 1) {
-
-			displayInstructions();
-		}
-
-	}
-
-	// This method displays the third set of instructions
-	private void displayInstructions3() {
-
-		Object[] options = { "Next", "Back" }; // the titles of buttons
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"To learn more about a specific university, click on the icon where you can view the general and other important info!",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if next button is clicked, open third instructions page
-		if (button == 0) {
-
-			displayInstructions4();
-
-		}
-
-		// if back button is clicked, open first instructions page
-		else if (button == 1) {
-
-			displayInstructions2();
-		}
-
-	}
-
-	// This method displays the fourth set of instructions
-	private void displayInstructions4() {
-		Object[] options = { "Next", "Back" }; // the titles of buttons
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"Your current location is the same as the one in your student profile, and can be identified by the red location pin. "
-						+ "All of the distances between universities are based on your current location",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if next button is clicked, open third instructions page
-		if (button == 0) {
-
-			displayInstructions5();
-
-		}
-
-		// if back button is clicked, open first instructions page
-		else if (button == 1) {
-
-			displayInstructions3();
-		}
-
-	}
-
-	// This method displays the fifth set of instructions
-	private void displayInstructions5() {
-
-		Object[] options = { "Next", "Back" }; // the titles of buttons
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"To view universities within a certain radius, feel free to click on the options on the top left of the map. ",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if next button is clicked, open third instructions page
-		if (button == 0) {
-
-			displayInstructions6();
-
-		}
-
-		// if back button is clicked, open first instructions page
-		else if (button == 1) {
-
-			displayInstructions4();
-		}
-
-	}
-
-	// This method displays the sixth set of instructions
-	private void displayInstructions6() {
-
-		Object[] options = { "Next", "Back" }; // the titles of buttons
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"To view bookmarked universities, click on the button in the middle where you will be able to see all of the University Icons you have bookmarked.",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if next button is clicked, open third instructions page
-		if (button == 0) {
-
-			displayInstructions7();
-
-		}
-
-		// if back button is clicked, open first instructions page
-		else if (button == 1) {
-
-			displayInstructions5();
-		}
-
-	}
-
-	// This method displays the seventh set of instructions
-	private void displayInstructions7() {
-
-		Object[] options = { "Done" }; // if next button is clicked, open second instructions page
-		int button = JOptionPane.showOptionDialog(mapFrame,
-				"If you would like to see these instructions again, click the 'HELP' button on the top right of the screen. "
-						+ "Enjoy exploring the map!",
-				"Instructions Information", JOptionPane.OK_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options,
-				options[0]); // default button title
-
-		// if back button is clicked, open second instructions page
-		if (button == 0) {
-
-			JOptionPane.getRootFrame().dispose();
+			JOptionPane.showMessageDialog(mapFrame, unbookmarkedPane, "Bookmarked Universities", 1);
 
 		}
 

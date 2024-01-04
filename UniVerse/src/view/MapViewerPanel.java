@@ -1,4 +1,5 @@
 package view;
+
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.event.ActionEvent;
@@ -43,19 +44,22 @@ public class MapViewerPanel extends JPanel {
 	// This button allows the user to look at their bookmarked universities
 	private JButton bookmark = new JButton("BOOKMARKS");
 
+	// This button allows the user to unbookmark Universities
+	private JButton unbookmark = new JButton("UNBOOKMARK");
+
 	// title of screen
 	JLabel title = new JLabel("Interactive Map");
 
 	// distance radius options that the users can choose from
 	private String[] distanceChoice = { "30 km radius", "60 km radius", "90 km radius", "120 km+ radius" };
 	private JComboBox distanceRadius = new JComboBox(distanceChoice);
-	
+
 	// contains all the JButtons of each location
 	Set<SwingWaypoint> waypoints;
 
 	// constructor
 	public MapViewerPanel() {
-		
+
 		setLayout(null);
 		setSize(1440, 810);
 		setBackground(new Color(188, 202, 218));
@@ -86,7 +90,7 @@ public class MapViewerPanel extends JPanel {
 
 		// set user's Current location
 		MapController.locationsArray[22] = MapController.currentLocation;
-		
+
 		// Create a TileFactoryInfo for OpenStreetMap
 		TileFactoryInfo info = new OSMTileFactoryInfo();
 		DefaultTileFactory tileFactory = new DefaultTileFactory(info);
@@ -94,16 +98,16 @@ public class MapViewerPanel extends JPanel {
 
 		// Use 8 threads in parallel to load the tiles
 		tileFactory.setThreadPoolSize(8);
-		
+
 		// set default location as user's current location
 		mapViewer.setZoom(7);
 		mapViewer.setAddressLocation(MapController.locationsArray[22]);
-		
+
 		// Display the viewer in a JFrame
 		mapViewer.setBounds(80, 66, 1250, 661);
 		mapViewer.setLayout(null);
 		add(mapViewer);
-		
+
 		// Add interactions
 		MouseInputListener mia = new PanMouseInputListener(mapViewer);
 		mapViewer.addMouseListener(mia);
@@ -155,28 +159,36 @@ public class MapViewerPanel extends JPanel {
 
 		// set help button on map
 		help.setBackground(new Color(255, 85, 85));
+		help.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
 		help.setBorderPainted(false);
 		help.setOpaque(true);
-		help.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
-		help.setBounds(810, 11, 133, 43);
+		help.setBounds(850, 11, 133, 43);
 		mapViewer.add(help);
-		//help.addActionListener(this);
+		// help.addActionListener(this);
 
 		// set bookmark button on map
 		bookmark.setBackground(new Color(0, 164, 82));
+		bookmark.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
+		bookmark.setBounds(430, 11, 191, 43);
 		bookmark.setBorderPainted(false);
 		bookmark.setOpaque(true);
-		bookmark.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
-		bookmark.setBounds(573, 11, 191, 43);
 		mapViewer.add(bookmark);
-		//bookmark.addActionListener(this);
+		// bookmark.addActionListener(this);
 
 		// set distance radius options on map
 		distanceRadius.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
 		distanceRadius.setBackground(new Color(125, 153, 183));
-		distanceRadius.setBounds(335, 11, 198, 43);
-		//distanceRadius.addActionListener(this);
+		distanceRadius.setBounds(220, 11, 198, 43);
+		// distanceRadius.addActionListener(this);
 		mapViewer.add(distanceRadius);
+
+		// set unbookmark check boxes
+		unbookmark.setBackground(new Color(255, 255, 153));
+		unbookmark.setFont(new Font("Tw Cen MT Condensed", Font.PLAIN, 20));
+		unbookmark.setBounds(640, 11, 191, 43);
+		unbookmark.setBorderPainted(false);
+		unbookmark.setOpaque(true);
+		mapViewer.add(unbookmark);
 
 		// set title on frame
 		title.setFont(new Font("Tw Cen MT Condensed", Font.BOLD, 50));
@@ -187,7 +199,7 @@ public class MapViewerPanel extends JPanel {
 		setVisible(true);
 
 	}
-	
+
 	public JXMapViewer getMapViewer() {
 		return mapViewer;
 	}
@@ -227,7 +239,15 @@ public class MapViewerPanel extends JPanel {
 	public void setDistanceChoice(String[] distanceChoice) {
 		this.distanceChoice = distanceChoice;
 	}
-	
+
+	public JButton getUnbookmarked() {
+		return unbookmark;
+	}
+
+	public void setUnbookmarked(JButton unbookmark) {
+		this.unbookmark = unbookmark;
+	}
+
 	// This method adds each location onto the map
 	public void addLocation(boolean radius) {
 
@@ -292,6 +312,5 @@ public class MapViewerPanel extends JPanel {
 		}
 
 	}
-
 
 }

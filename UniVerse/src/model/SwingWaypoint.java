@@ -15,6 +15,8 @@ import java.net.URISyntaxException;
 
 import controller.MapController;
 
+//This class controllers the university location pins and what happens when you click on them
+//resources: https://github.com/msteiger/jxmapviewer2
 public class SwingWaypoint extends DefaultWaypoint {
 
 	// fields
@@ -191,27 +193,50 @@ public class SwingWaypoint extends DefaultWaypoint {
 
 				// keeps track of already bookmarked universities
 				boolean duplicate = false;
+				boolean space = false;
+				int indexSpace = -1;
 
 				// loops through each of the already bookmarked universities and sees if the
 				// university the user wants to bookmark has already been bookmarked
-				for (int bookmark = 0; bookmark < MapController.bookmarked.size(); bookmark++) {
+				for (int bookmark = 0; bookmark < MapController.bookmarked.length; bookmark++) {
 
 					// if it is already bookmarked, display message and change tracker
-					if (MapController.bookmarked.get(bookmark) == index) {
+					if (MapController.bookmarked[bookmark] == index) {
 
 						duplicate = true;
 						JOptionPane.showMessageDialog(null, "University Already Bookmarked", "Bookmark Error",
-								JOptionPane.INFORMATION_MESSAGE);
+								JOptionPane.ERROR_MESSAGE);
+
+						// so that the other JDialog does not appear
+						space = true;
+
+					}
+
+					// check to see if user has bookmarked 5 universities already or if there is
+					// still space
+					if (MapController.bookmarked[bookmark] == -1) {
+						space = true;
+						indexSpace = bookmark;
+						break;
 
 					}
 				}
 
-				// if university hasn't been bookmarked, bookmark it and display the message
-				if (!duplicate) {
+				// if university hasn't been bookmarked and there is space, bookmark it and
+				// display the message
+				if (!duplicate && space) {
 
-					MapController.bookmarked.add(index);
+					MapController.bookmarked[indexSpace] = index;
 					JOptionPane.showMessageDialog(null, "University Successfully Bookmarked!", "University Bookmarked",
 							JOptionPane.INFORMATION_MESSAGE);
+
+				}
+
+				// if there is no space, display message
+				else if (!space) {
+
+					JOptionPane.showMessageDialog(null, "No more rooom! Remove a bookmark", "Bookmark Error",
+							JOptionPane.ERROR_MESSAGE);
 
 				}
 

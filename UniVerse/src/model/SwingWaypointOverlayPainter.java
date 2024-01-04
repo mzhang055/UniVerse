@@ -9,7 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.geom.Point2D;
 
-//This class initializes settings for the location buttons 
+//This class initializes settings for the location buttons
+//resources: https://github.com/msteiger/jxmapviewer2
 public class SwingWaypointOverlayPainter extends WaypointPainter<SwingWaypoint> {
 
 	// location pin icon
@@ -65,7 +66,7 @@ public class SwingWaypointOverlayPainter extends WaypointPainter<SwingWaypoint> 
 			button.setBorderPainted(false);
 
 			// set size and location of button
-			button.setSize(40, 40);
+			button.setSize(80, 60);
 			button.setLocation(buttonX - button.getWidth() / 2, buttonY - button.getHeight() / 2);
 			
 		}
